@@ -12,15 +12,15 @@ namespace ecfcpp::ga
 template< typename Problem, typename Selection, typename Crossover, typename Mutation, typename Population >
 [[ nodiscard ]] constexpr auto generational
 (
-    bool const useElitism,
-    std::size_t const maxGenerations,
-    double const desiredFitness,
-    double const precision,
-    Problem const & problem,
-    Selection const & selection,
-    Crossover const & crossover,
-    Mutation const & mutation,
-    Population const & initialPopulation
+    bool        const   useElitism,
+    std::size_t const   maxGenerations,
+    double      const   desiredFitness,
+    double      const   precision,
+    Problem     const & problem,
+    Selection   const & selection,
+    Crossover   const & crossover,
+    Mutation    const & mutation,
+    Population  const & initialPopulation
 )
 {
     auto population{ initialPopulation };
