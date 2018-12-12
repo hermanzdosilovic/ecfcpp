@@ -35,7 +35,7 @@ template< typename Vector, typename std::enable_if_t< !std::is_same< bool, typen
 Population< Vector > create( std::size_t const size )
 {
     Population< Vector > population( size );
-    detail::initialize( population, [](){ return 10; } );
+    detail::initialize( population, [](){ return random::normal(); } );
     return population;
 }
 
