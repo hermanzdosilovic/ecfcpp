@@ -15,7 +15,7 @@
 namespace ecfcpp
 {
 
-template< typename T, std::size_t N, typename Fitness = fitness_type >
+template< typename T, std::size_t N, typename Decimal = decimal_t >
 class UnboundedVector
 {
 public:
@@ -23,15 +23,15 @@ public:
 
     constexpr UnboundedVector() = default;
 
-    constexpr UnboundedVector( Fitness const fitness ) : fitness{ fitness }, penalty{ -1 * fitness } {}
+    constexpr UnboundedVector( Decimal const fitness ) : fitness{ fitness }, penalty{ -1 * fitness } {}
 
-    constexpr UnboundedVector( UnboundedVector< T, N, Fitness > const & other ) :
+    constexpr UnboundedVector( UnboundedVector< T, N, Decimal > const & other ) :
         fitness{ other.fitness },
         penalty{ other.penalty },
         data_  { other.data_   }
     {}
 
-    constexpr UnboundedVector( UnboundedVector< T, N, Fitness > && other ) :
+    constexpr UnboundedVector( UnboundedVector< T, N, Decimal > && other ) :
         fitness{ other.fitness },
         penalty{ other.penalty },
         data_  { std::move( other.data_ ) }
@@ -49,15 +49,15 @@ public:
         return data_[ index ];
     }
 
-    constexpr inline bool operator< ( UnboundedVector< T, N, Fitness > const & rhs ) const { return fitness < rhs.fitness; }
-    constexpr inline bool operator> ( UnboundedVector< T, N, Fitness > const & rhs ) const { return rhs < *this;           }
-    constexpr inline bool operator<=( UnboundedVector< T, N, Fitness > const & rhs ) const { return !( *this > rhs );      }
-    constexpr inline bool operator>=( UnboundedVector< T, N, Fitness > const & rhs ) const { return !( rhs > *this );      }
+    constexpr inline bool operator< ( UnboundedVector< T, N, Decimal > const & rhs ) const { return fitness < rhs.fitness; }
+    constexpr inline bool operator> ( UnboundedVector< T, N, Decimal > const & rhs ) const { return rhs < *this;           }
+    constexpr inline bool operator<=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( *this > rhs );      }
+    constexpr inline bool operator>=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( rhs > *this );      }
 
-    constexpr inline bool operator==( UnboundedVector< T, N, Fitness > const & rhs ) const { return data_ == rhs.data_; }
-    constexpr inline bool operator!=( UnboundedVector< T, N, Fitness > const & rhs ) const { return !( *this == rhs );  }
+    constexpr inline bool operator==( UnboundedVector< T, N, Decimal > const & rhs ) const { return data_ == rhs.data_; }
+    constexpr inline bool operator!=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( *this == rhs );  }
 
-    constexpr inline auto & operator=( UnboundedVector< T, N, Fitness > const & rhs )
+    constexpr inline auto & operator=( UnboundedVector< T, N, Decimal > const & rhs )
     {
         fitness = rhs.fitness;
         penalty = rhs.penalty;
@@ -65,7 +65,7 @@ public:
         return *this;
     }
 
-    constexpr inline auto & operator=( UnboundedVector< T, N, Fitness > && rhs )
+    constexpr inline auto & operator=( UnboundedVector< T, N, Decimal > && rhs )
     {
         fitness = rhs.fitness;
         penalty = rhs.penalty;
@@ -73,7 +73,7 @@ public:
         return *this;
     }
 
-    constexpr friend void swap( UnboundedVector< T, N, Fitness > & first, UnboundedVector< T, N, Fitness > & second )
+    constexpr friend void swap( UnboundedVector< T, N, Decimal > & first, UnboundedVector< T, N, Decimal > & second )
     {
         using std::swap;
         swap( first.fitness, second.fitness );
@@ -89,33 +89,33 @@ public:
     constexpr auto begin() { return std::begin( data_ ); }
     constexpr auto end  () { return std::end  ( data_ ); }
 
-    Fitness fitness{ constant::worstFitness< Fitness >() };
-    Fitness penalty{ constant::worstPenalty< Fitness >() };
+    Decimal fitness{ constant::worstFitness< Decimal >() };
+    Decimal penalty{ constant::worstPenalty< Decimal >() };
 
 private:
     std::array< value_type, N > data_{};
 };
 
-template< typename T, std::size_t N, typename Fitness = fitness_type >
-using Vector = UnboundedVector< T, N, Fitness >;
+template< typename T, std::size_t N, typename Decimal = decimal_t >
+using Vector = UnboundedVector< T, N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using UnboundedIntVector = UnboundedVector< std::int32_t, N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using UnboundedIntVector = UnboundedVector< std::int32_t, N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using IntVector = UnboundedIntVector< N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using IntVector = UnboundedIntVector< N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using UnboundedRealVector = UnboundedVector< double, N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using UnboundedRealVector = UnboundedVector< double, N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using RealVector = UnboundedRealVector< N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using RealVector = UnboundedRealVector< N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using UnboundedBitVector = UnboundedVector< bool, N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using UnboundedBitVector = UnboundedVector< bool, N, Decimal >;
 
-template< std::size_t N, typename Fitness = fitness_type >
-using BitVector = UnboundedBitVector< N, Fitness >;
+template< std::size_t N, typename Decimal = decimal_t >
+using BitVector = UnboundedBitVector< N, Decimal >;
 
 }
 

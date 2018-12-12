@@ -13,7 +13,7 @@ using Population = std::vector< T >;
 template< typename T >
 using Container = std::vector< T >;
 
-using fitness_type = float;
+using decimal_t = float;
 
 }
 
