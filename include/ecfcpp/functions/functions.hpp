@@ -42,7 +42,7 @@ template< typename Point >
         double clause1{ 0 }, clause2{ 0 };
         for ( auto const & x : p )
         {
-            clause1 += std::pow( x, 2 );
+            clause1 += x * x;
             clause2 += std::cos( c * x );
         }
 
@@ -101,7 +101,7 @@ template< typename Point >
     double result{ 0 };
     for ( auto const & x : p )
     {
-        result += std::pow( x, 2 );
+        result += x * x;
     }
     return -1 * std::exp( -0.5 * result );
 }
@@ -115,7 +115,7 @@ template< typename Point >
     decltype( std::size( p ) ) i{ 0 };
     for ( auto const & x : p )
     {
-        clause1 += std::pow( x, 2 );
+        clause1 += x * x;
         clause2 *= std::cos( x / std::sqrt( static_cast< double >( i ) ) );
         ++i;
     }
@@ -132,7 +132,7 @@ template< typename Point >
     double result{ 10 * std::size( p ) };
     for ( auto const & x : p )
     {
-        result += std::pow( x, 2 ) - 10 * std::cos( constant::tau * x );
+        result += x * x - 10 * std::cos( constant::tau * x );
     }
     return result;
 }
