@@ -106,7 +106,7 @@ template< std::size_t N, typename Decimal = decimal_t >
 using IntVector = UnboundedIntVector< N, Decimal >;
 
 template< std::size_t N, typename Decimal = decimal_t >
-using UnboundedRealVector = UnboundedVector< double, N, Decimal >;
+using UnboundedRealVector = UnboundedVector< decimal_t, N, Decimal >;
 
 template< std::size_t N, typename Decimal = decimal_t >
 using RealVector = UnboundedRealVector< N, Decimal >;

@@ -2,10 +2,12 @@
 #define ECFCPP_FUNCTIONS_FUNCTIONS_HPP
 
 #include <ecfcpp/constants.hpp>
+#include <ecfcpp/types.hpp>
 
 #include <cmath>
 #include <cstdint>
 #include <iterator>
+#include <type_traits>
 
 namespace ecfcpp::function
 {
@@ -18,7 +20,7 @@ public:
     constexpr CallCounter( Function && function ) : function_{ function } {}
 
     template< typename Point >
-    [[ nodiscard ]] constexpr double operator()( Point const & p ) const noexcept
+    [[ nodiscard ]] constexpr auto operator()( Point const & p ) const noexcept
     {
         ++callCounter_;
         return function_( p );
@@ -32,14 +34,14 @@ private:
 };
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyfcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr auto ackley( double const a = 20, double const b = 0.2, double const c = constant::tau ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr auto ackley( Decimal const a = 20, Decimal const b = 0.2, Decimal const c = constant::tau< Decimal >() ) noexcept
 {
     return
     [ a, b, c ]
-    ( Point const & p ) constexpr -> double
+    ( Point const & p ) constexpr -> Decimal
     {
-        double clause1{ 0 }, clause2{ 0 };
+        Decimal clause1{ 0 }, clause2{ 0 };
         for ( auto const & x : p )
         {
             clause1 += x * x;
@@ -49,18 +51,18 @@ template< typename Point >
         clause1 = -1 * b * std::sqrt( clause1 / std::size( p ) );
         clause2 /= std::size( p );
 
-        return -1 * a * std::exp( clause1 ) - exp( clause2 ) + a + constant::e;
+        return -1 * a * std::exp( clause1 ) - exp( clause2 ) + a + constant::e< Decimal >();
     };
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyn4fcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double ackleyn4( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal ackleyn4( Point const & p ) noexcept
 {
-    constexpr auto e02{ std::exp( -0.2 ) };
+    constexpr auto e02{ std::exp( static_cast< Decimal >( -0.2 ) ) };
 
-    double result{ 0 };
-    for ( decltype( std::size( p ) ) i{ 0 }; i < std::size( p ) - 1; ++i )
+    Decimal result{ 0 };
+    for ( std::size_t i{ 0 }; i < std::size( p ) - 1; ++i )
     {
         result += e02 * std::hypot( p[ i ], p[ i + 1 ] ) + 3 * ( std::cos( 2 * p[ i ] ) + std::sin( 2 * p[ i + 1 ] ) );
     }
@@ -69,10 +71,10 @@ template< typename Point >
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen1fcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double alpinen1( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal alpinen1( Point const & p ) noexcept
 {
-    double result{ 0 };
+    Decimal result{ 0 };
     for ( auto const & x : p )
     {
         result += std::abs( x * std::sin( x ) + 0.1 * x );
@@ -82,10 +84,10 @@ template< typename Point >
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen2fcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double alpinen2( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal alpinen2( Point const & p ) noexcept
 {
-    double result{ 1 };
+    Decimal result{ 1 };
     for ( auto const & x : p )
     {
         result *= std::sqrt( x ) * std::sin( x );
@@ -95,10 +97,10 @@ template< typename Point >
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/exponentialfcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double exponential( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal exponential( Point const & p ) noexcept
 {
-    double result{ 0 };
+    Decimal result{ 0 };
     for ( auto const & x : p )
     {
         result += x * x;
@@ -107,16 +109,16 @@ template< typename Point >
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/griewankfcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double griewank( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal griewank( Point const & p ) noexcept
 {
-    double clause1{ 0 }, clause2{ 1 };
+    Decimal clause1{ 0 }, clause2{ 1 };
 
-    decltype( std::size( p ) ) i{ 0 };
+    std::size_t i{ 0 };
     for ( auto const & x : p )
     {
         clause1 += x * x;
-        clause2 *= std::cos( x / std::sqrt( static_cast< double >( i ) ) );
+        clause2 *= std::cos( x / std::sqrt( static_cast< Decimal >( i ) ) );
         ++i;
     }
 
@@ -126,13 +128,13 @@ template< typename Point >
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/rastriginfcn.html
-template< typename Point >
-[[ nodiscard ]] constexpr double rastrigin( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+[[ nodiscard ]] constexpr Decimal rastrigin( Point const & p ) noexcept
 {
-    double result{ 10 * std::size( p ) };
+    Decimal result{ 10 * std::size( p ) };
     for ( auto const & x : p )
     {
-        result += x * x - 10 * std::cos( constant::tau * x );
+        result += x * x - 10 * std::cos( constant::tau< Decimal >() * x );
     }
     return result;
 }
