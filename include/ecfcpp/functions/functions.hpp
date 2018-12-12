@@ -28,7 +28,7 @@ public:
 
 private:
     Function & function_;
-    mutable std::uint64_t callCounter_{ 0 };
+    mutable std::uint64_t callCounter_{};
 };
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyfcn.html
@@ -37,7 +37,7 @@ template< typename Point >
 {
     return
     [ a, b, c ]
-    ( Point const & p ) -> double
+    ( Point const & p ) constexpr -> double
     {
         double clause1{ 0 }, clause2{ 0 };
         for ( auto const & x : p )
@@ -57,7 +57,7 @@ template< typename Point >
 template< typename Point >
 [[ nodiscard ]] constexpr double ackleyn4( Point const & p ) noexcept
 {
-    constexpr double e02{ std::exp( -0.2 ) };
+    constexpr auto e02{ std::exp( -0.2 ) };
 
     double result{ 0 };
     for ( decltype( std::size( p ) ) i{ 0 }; i < std::size( p ) - 1; ++i )
