@@ -8,7 +8,8 @@ template< typename Function >
 class Maximization
 {
 public:
-    constexpr Maximization( Function & function ) : function_{ function } {};
+    constexpr Maximization( Function  & function ) : function_{ function } {};
+    constexpr Maximization( Function && function ) : function_{ function } {};
 
     template< typename Point >
     constexpr inline double fitness( Point const & p ) const { return function_( p ); }

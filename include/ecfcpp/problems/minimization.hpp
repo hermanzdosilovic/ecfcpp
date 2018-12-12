@@ -10,7 +10,8 @@ template< typename Function >
 class Minimization
 {
 public:
-    constexpr Minimization( Function & function ) : function_{ function } {};
+    constexpr Minimization( Function  & function ) : function_{ function } {};
+    constexpr Minimization( Function && function ) : function_{ function } {};
 
     constexpr inline double fitness( double const penalty ) const { return -1 * penalty; }
 

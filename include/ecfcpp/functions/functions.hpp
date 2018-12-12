@@ -14,7 +14,8 @@ template< typename Function >
 class CallCounter
 {
 public:
-    constexpr CallCounter( Function & function ) : function_{ function } {}
+    constexpr CallCounter( Function  & function ) : function_{ function } {}
+    constexpr CallCounter( Function && function ) : function_{ function } {}
 
     template< typename Point >
     [[ nodiscard ]] constexpr double operator()( Point const & p ) const noexcept
