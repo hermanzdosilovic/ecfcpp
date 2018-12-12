@@ -21,11 +21,12 @@ public:
     {}
 
     template< typename T >
-    constexpr T & operator()( T & individual ) const noexcept
+    constexpr T operator()( T const & individual ) const noexcept
     {
+        T mutant{ individual };
         bool mutationHappened{ false };
 
-        for ( auto & value : individual )
+        for ( auto & value : mutant )
         {
             if ( random::uniform() < mutationProbability_ )
             {
@@ -36,10 +37,10 @@ public:
 
         if ( !mutationHappened && forceMutation_ )
         {
-            individual[ random::uniform( 0UL, std::size( individual ) ) ] += random::normal( 0, sigma_ );
+            mutant[ random::uniform( 0UL, std::size( mutant ) ) ] += random::normal( 0, sigma_ );
         }
 
-        return individual;
+        return mutant;
     }
 
 private:
