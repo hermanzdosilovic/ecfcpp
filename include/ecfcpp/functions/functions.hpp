@@ -34,7 +34,7 @@ private:
 };
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
 [[ nodiscard ]] constexpr auto ackley( Decimal const a = 20, Decimal const b = 0.2, Decimal const c = constant::tau< Decimal >() ) noexcept
 {
     return
@@ -44,8 +44,9 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
         Decimal clause1{ 0 }, clause2{ 0 };
         for ( auto const & x : p )
         {
-            clause1 += x * x;
-            clause2 += std::cos( c * x );
+            auto const v{ static_cast< Decimal >( x ) };
+            clause1 += v * v;
+            clause2 += std::cos( c * v );
         }
 
         clause1 = -1 * b * std::sqrt( clause1 / std::size( p ) );
@@ -56,7 +57,7 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyn4fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
 [[ nodiscard ]] constexpr Decimal ackleyn4( Point const & p ) noexcept
 {
     constexpr auto e02{ std::exp( static_cast< Decimal >( -0.2 ) ) };
@@ -64,61 +65,70 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
     Decimal result{ 0 };
     for ( std::size_t i{ 0 }; i < std::size( p ) - 1; ++i )
     {
-        result += e02 * std::hypot( p[ i ], p[ i + 1 ] ) + 3 * ( std::cos( 2 * p[ i ] ) + std::sin( 2 * p[ i + 1 ] ) );
+        auto const x{ static_cast< Decimal >( p[ i     ] ) };
+        auto const y{ static_cast< Decimal >( p[ i + 1 ] ) };
+
+        result += e02 * std::hypot( x, y ) + 3 * ( std::cos( 2 * x ) + std::sin( 2 * y ) );
     }
 
     return result;
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen1fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
 [[ nodiscard ]] constexpr Decimal alpinen1( Point const & p ) noexcept
 {
     Decimal result{ 0 };
     for ( auto const & x : p )
     {
-        result += std::abs( x * std::sin( x ) + 0.1 * x );
+        auto const v{ static_cast< Decimal >( x ) };
+        result += std::abs( v * std::sin( v ) + 0.1 * v );
     }
     return result;
 }
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen2fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
 [[ nodiscard ]] constexpr Decimal alpinen2( Point const & p ) noexcept
 {
     Decimal result{ 1 };
     for ( auto const & x : p )
     {
-        result *= std::sqrt( x ) * std::sin( x );
+        auto const v{ static_cast< Decimal >( x ) };
+        result *= std::sqrt( v ) * std::sin( v );
     }
     return result;
 }
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/exponentialfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
 [[ nodiscard ]] constexpr Decimal exponential( Point const & p ) noexcept
 {
     Decimal result{ 0 };
     for ( auto const & x : p )
     {
-        result += x * x;
+        auto const v{ static_cast< Decimal >( x ) };
+        result += v * v;
     }
     return -1 * std::exp( -0.5 * result );
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/griewankfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
-[[ nodiscard ]] constexpr Decimal griewank( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+[[ nodiscard ]] constexpr Decimal griewank( Point const & point ) noexcept
 {
     Decimal clause1{ 0 }, clause2{ 1 };
 
     std::size_t i{ 0 };
-    for ( auto const & x : p )
+    for ( auto const & x : point )
     {
-        clause1 += x * x;
-        clause2 *= std::cos( x / std::sqrt( static_cast< Decimal >( i ) ) );
+        auto const v{ static_cast< Decimal >( x ) };
+
+        clause1 += v * v;
+        clause2 *= std::cos( v / std::sqrt( static_cast< Decimal >( i ) ) );
+
         ++i;
     }
 
@@ -128,13 +138,14 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/rastriginfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_same_v< typename Point::value_type, Decimal > > >
-[[ nodiscard ]] constexpr Decimal rastrigin( Point const & p ) noexcept
+template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+[[ nodiscard ]] constexpr Decimal rastrigin( Point const & point ) noexcept
 {
-    Decimal result{ 10 * std::size( p ) };
-    for ( auto const & x : p )
+    Decimal result{ 10 * std::size( point ) };
+    for ( auto const & x : point )
     {
-        result += x * x - 10 * std::cos( constant::tau< Decimal >() * x );
+        auto const v{ static_cast< Decimal >( x ) };
+        result += v * v - 10 * std::cos( constant::tau< Decimal >() * v );
     }
     return result;
 }
