@@ -44,8 +44,7 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
 
         for ( std::size_t j{ useElitism ? 1UL : 0UL }; j < std::size( population ); ++j )
         {
-            nextPopulation[ j ] = std::move
-            (
+            nextPopulation[ j ] =
                 mutation
                 (
                     crossover
@@ -53,8 +52,7 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
                         selection( population ),
                         selection( population )
                     )
-                )
-            );
+                );
         }
 
         std::swap( population, nextPopulation );

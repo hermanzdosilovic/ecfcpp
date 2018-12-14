@@ -34,7 +34,12 @@ private:
 };
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr auto ackley( Decimal const a = 20, Decimal const b = 0.2, Decimal const c = constant::tau< Decimal >() ) noexcept
 {
     return
@@ -57,7 +62,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/ackleyn4fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal ackleyn4( Point const & p ) noexcept
 {
     constexpr auto e02{ std::exp( static_cast< Decimal >( -0.2 ) ) };
@@ -75,7 +85,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen1fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal alpinen1( Point const & p ) noexcept
 {
     Decimal result{ 0 };
@@ -89,7 +104,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/alpinen2fcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal alpinen2( Point const & p ) noexcept
 {
     Decimal result{ 1 };
@@ -103,7 +123,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 
 
 // http://benchmarkfcns.xyz/benchmarkfcns/exponentialfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal exponential( Point const & p ) noexcept
 {
     Decimal result{ 0 };
@@ -116,7 +141,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/griewankfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal griewank( Point const & point ) noexcept
 {
     Decimal clause1{ 0 }, clause2{ 1 };
@@ -138,7 +168,12 @@ template< typename Point, typename Decimal = decimal_t, typename = std::enable_i
 }
 
 // http://benchmarkfcns.xyz/benchmarkfcns/rastriginfcn.html
-template< typename Point, typename Decimal = decimal_t, typename = std::enable_if_t< std::is_floating_point_v< Decimal > > >
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
 [[ nodiscard ]] constexpr Decimal rastrigin( Point const & point ) noexcept
 {
     Decimal result{ 10 * std::size( point ) };
