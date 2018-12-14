@@ -59,7 +59,7 @@ Population< Vector > create
 (
     Vector const & templateVector,
     std::size_t const size,
-    Function && initializer = [](){ return random::uniform( 0, 10 ) % 2; }
+    Function && initializer = [](){ return random::boolean(); }
 )
 {
     Population< Vector > population( size, templateVector );

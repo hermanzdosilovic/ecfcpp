@@ -36,6 +36,11 @@ inline T normal( double const mean = 0, double const stddev = 1 ) noexcept
     return static_cast< T >( mean + stddev * normalDistribution( randomGenerator ) );
 }
 
+inline bool boolean() noexcept
+{
+    return uniform( 0, 10 ) % 2;
+}
+
 }
 
 }
