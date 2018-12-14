@@ -211,6 +211,28 @@ template
     };
 }
 
+// https://www.cs.unm.edu/~neal.holts/dga/benchmarkFunction/schafferf6.html
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
+[[ nodiscard ]] constexpr Decimal shafferf6( Point const & point ) noexcept
+{
+    Decimal sum{ 0 };
+    for ( auto const & x : point )
+    {
+        auto const v{ static_cast< Decimal >( x ) };
+        sum += v * v;
+    }
+
+    auto const numeratorFactor{ std::sin( std::sqrt( sum ) ) };
+    auto const denominatorFactor{ 1 + 0.001 * sum };
+
+    return 0.5 + ( numeratorFactor * numeratorFactor - 0.5 ) / ( denominatorFactor * denominatorFactor );
+}
+
 }
 
 #endif // ECFCPP_FUNCTIONS_FUNCTIONS_HPP
