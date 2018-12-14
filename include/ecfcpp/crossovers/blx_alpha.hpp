@@ -14,7 +14,7 @@ namespace ecfcpp::crossover
 class BlxAlpha
 {
 public:
-    constexpr BlxAlpha( double const alpha ) noexcept : alpha_{ alpha } {}
+    constexpr BlxAlpha( float const alpha ) noexcept : alpha_{ alpha } {}
 
     template< typename T >
     constexpr T operator()( T const & mom, T const & dad ) const
@@ -30,7 +30,7 @@ public:
     }
 
 private:
-    double alpha_;
+    float alpha_;
 };
 
 }

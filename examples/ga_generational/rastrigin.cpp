@@ -15,7 +15,7 @@ int main()
 
     constexpr std::size_t tournamentSize{ 3 };
 
-    constexpr double alpha{ 0.2 };
+    constexpr float alpha{ 0.2 };
 
     constexpr double mutationProbability{ 0.01 };
     constexpr bool   forceMutation{ true };
