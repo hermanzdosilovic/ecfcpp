@@ -51,7 +51,7 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
                     (
                         selection( population ),
                         selection( population )
-                    )
+                    )[ 0 ]
                 );
         }
 

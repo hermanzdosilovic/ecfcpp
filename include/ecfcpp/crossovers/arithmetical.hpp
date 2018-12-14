@@ -1,6 +1,8 @@
 #ifndef ECFCPP_CROSSOVERS_ARITHMETICAL_HPP
 #define ECFCPP_CROSSOVERS_ARITHMETICAL_HPP
 
+#include <ecfcpp/types.hpp>
+
 #include <cstddef>
 #include <iterator>
 
@@ -13,14 +15,18 @@ public:
     constexpr Arithmetical( float const lambda ) noexcept : lambda_{ lambda } {}
 
     template< typename T >
-    constexpr T operator()( T const & mom, T const & dad ) const
+    constexpr Container< T > operator()( T const & mom, T const & dad ) const
     {
-        T child{ mom };
-        for ( std::size_t i{ 0 }; i < std::size( child ); ++i )
+        T firstChild { mom };
+        T secondChild{ dad };
+
+        for ( std::size_t i{ 0 }; i < std::size( mom ); ++i )
         {
-            child[ i ] = lambda_ * mom[ i ] + ( 1 - lambda_ ) * dad[ i ];
+            firstChild [ i ] = lambda_ * mom[ i ] + ( 1 - lambda_ ) * dad[ i ];
+            secondChild[ i ] = lambda_ * dad[ i ] + ( 1 - lambda_ ) * mom[ i ];
         }
-        return child;
+
+        return { firstChild, secondChild };
     }
 
 private:

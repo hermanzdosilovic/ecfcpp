@@ -17,7 +17,7 @@ public:
     constexpr BlxAlpha( float const alpha ) noexcept : alpha_{ alpha } {}
 
     template< typename T >
-    constexpr T operator()( T const & mom, T const & dad ) const
+    constexpr Container< T > operator()( T const & mom, T const & dad ) const
     {
         T child{ mom };
         for ( std::size_t i{ 0 }; i < std::size( child ); ++i )
@@ -26,7 +26,7 @@ public:
             auto const interval{ ( cmax - cmin ) * ( 1 - 2 * alpha_ ) };
             child[ i ] = cmin - ( cmax - cmin ) * alpha_ + interval * random::uniform();
         }
-        return child;
+        return { child };
     }
 
 private:

@@ -21,7 +21,7 @@ public:
     {}
 
     template< typename T >
-    constexpr T operator()( T const & individual ) const noexcept
+    constexpr T operator()( T const & individual ) const
     {
         T mutant{ individual };
         bool mutationHappened{ false };
@@ -41,6 +41,20 @@ public:
         }
 
         return mutant;
+    }
+
+    template< typename T >
+    constexpr Container< T > operator()( Container< T > const & individuals ) const
+    {
+        Container< T > mutants;
+        mutants.reserve( std::size( individuals ) );
+
+        for ( auto const & individual : individuals )
+        {
+            mutants.emplace_back( ( *this )( individual ) );
+        }
+
+        return mutants;
     }
 
 private:
