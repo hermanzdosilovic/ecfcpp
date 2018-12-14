@@ -31,19 +31,39 @@ void initialize( Population & population, Function && initializer )
 
 }
 
-template< typename Vector, typename std::enable_if_t< !std::is_same< bool, typename Vector::value_type >::value > * = nullptr >
-Population< Vector > create( std::size_t const size )
+template
+<
+    typename Vector,
+    typename Function,
+    typename std::enable_if_t< !std::is_same< bool, typename Vector::value_type >::value > * = nullptr
+>
+Population< Vector > create
+(
+    Vector const & templateVector,
+    std::size_t const size,
+    Function && initializer = [](){ return random::normal(); }
+)
 {
-    Population< Vector > population( size );
-    detail::initialize( population, [](){ return random::normal(); } );
+    Population< Vector > population( size, templateVector );
+    detail::initialize( population, initializer );
     return population;
 }
 
-template< typename Vector, typename std::enable_if_t< std::is_same< bool, typename Vector::value_type >::value > * = nullptr >
-Population< Vector > create( std::size_t const size )
+template
+<
+    typename Vector,
+    typename Function,
+    typename std::enable_if_t< std::is_same< bool, typename Vector::value_type >::value > * = nullptr
+>
+Population< Vector > create
+(
+    Vector const & templateVector,
+    std::size_t const size,
+    Function && initializer = [](){ return random::uniform( 0, 10 ) % 2; }
+)
 {
-    Population< Vector > population( size );
-    detail::initialize( population, [](){ return random::uniform( 0, 10 ) % 2; } );
+    Population< Vector > population( size, templateVector );
+    detail::initialize( population, initializer );
     return population;
 }
 

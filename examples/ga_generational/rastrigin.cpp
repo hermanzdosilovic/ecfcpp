@@ -21,7 +21,7 @@ int main()
     constexpr bool   forceMutation{ true };
     constexpr double sigma{ 0.3 };
 
-    using Chromosome = ecfcpp::RealVector< numberOfComponents >;
+    using Chromosome = ecfcpp::Vector< float, numberOfComponents >;
 
     constexpr auto function{ ecfcpp::function::CallCounter{ ecfcpp::function::rastrigin< Chromosome > } };
 
@@ -37,7 +37,7 @@ int main()
             ecfcpp::selection::Tournament{ tournamentSize },
             ecfcpp::crossover::BlxAlpha{ alpha },
             ecfcpp::mutation::Gaussian{ mutationProbability, forceMutation, sigma },
-            ecfcpp::factory::create< Chromosome >( populationSize )
+            ecfcpp::factory::create( Chromosome{ -10, 10 }, populationSize, [](){ return ecfcpp::random::uniform( -10, -5 ); } )
         )
     };
 

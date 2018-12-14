@@ -11,116 +11,160 @@
 #include <cstdint>
 #include <iterator>
 #include <ostream>
+#include <type_traits>
 
 namespace ecfcpp
 {
 
-template< typename T, std::size_t N, typename Decimal = decimal_t >
-class UnboundedVector
+template
+<
+    typename    T,
+    std::size_t N,
+    typename    Decimal = decimal_t,
+    typename =  std::enable_if_t< std::is_arithmetic_v< T > >
+>
+class Vector
 {
 public:
     using value_type = T;
 
-    constexpr UnboundedVector() = default;
+    constexpr Vector() = default;
 
-    constexpr UnboundedVector( Decimal const fitness ) : fitness{ fitness }, penalty{ -1 * fitness } {}
+    constexpr Vector
+    (
+        value_type const lowerBound,
+        value_type const upperBound
+    ) :
+        lowerBound_{ lowerBound },
+        upperBound_{ upperBound }
+    {
+        assert( lowerBound_ <= upperBound_ );
+    }
 
-    constexpr UnboundedVector( UnboundedVector< T, N, Decimal > const & other ) :
-        fitness{ other.fitness },
-        penalty{ other.penalty },
-        data_  { other.data_   }
+    constexpr Vector( Vector const & other ) :
+        data_      { other.data_       },
+        lowerBound_{ other.lowerBound_ },
+        upperBound_{ other.upperBound_ },
+        fitness    { other.fitness     },
+        penalty    { other.penalty     }
     {}
 
-    constexpr UnboundedVector( UnboundedVector< T, N, Decimal > && other ) :
-        fitness{ other.fitness },
-        penalty{ other.penalty },
-        data_  { std::move( other.data_ ) }
+    constexpr Vector( Vector && other ) :
+        data_      { std::move( other.data_ ) },
+        lowerBound_{ other.lowerBound_        },
+        upperBound_{ other.upperBound_        },
+        fitness    { other.fitness            },
+        penalty    { other.penalty            }
     {}
 
-    constexpr value_type operator[]( std::size_t const index ) const
+    constexpr inline value_type operator[]( std::size_t const index ) const
     {
         assert( index < N );
+        return std::clamp( data_[ index ], lowerBound_, upperBound_ );
+    }
+
+    constexpr inline value_type & operator[]( std::size_t const index )
+    {
+        assert( index < N );
+        data_[ index ] = std::clamp( data_[ index ], lowerBound_, upperBound_ );
         return data_[ index ];
     }
 
-    constexpr value_type & operator[]( std::size_t const index )
+    constexpr inline bool operator< ( Vector const & rhs ) const { return fitness < rhs.fitness; }
+    constexpr inline bool operator> ( Vector const & rhs ) const { return rhs < *this;           }
+    constexpr inline bool operator<=( Vector const & rhs ) const { return !( *this > rhs );      }
+    constexpr inline bool operator>=( Vector const & rhs ) const { return !( rhs > *this );      }
+
+    constexpr inline bool operator==( Vector const & rhs ) const { return data_ == rhs.data_; }
+    constexpr inline bool operator!=( Vector const & rhs ) const { return !( *this == rhs );  }
+
+    constexpr inline auto & operator=( Vector const & rhs )
     {
-        assert( index < N );
-        return data_[ index ];
-    }
-
-    constexpr inline bool operator< ( UnboundedVector< T, N, Decimal > const & rhs ) const { return fitness < rhs.fitness; }
-    constexpr inline bool operator> ( UnboundedVector< T, N, Decimal > const & rhs ) const { return rhs < *this;           }
-    constexpr inline bool operator<=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( *this > rhs );      }
-    constexpr inline bool operator>=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( rhs > *this );      }
-
-    constexpr inline bool operator==( UnboundedVector< T, N, Decimal > const & rhs ) const { return data_ == rhs.data_; }
-    constexpr inline bool operator!=( UnboundedVector< T, N, Decimal > const & rhs ) const { return !( *this == rhs );  }
-
-    constexpr inline auto & operator=( UnboundedVector< T, N, Decimal > const & rhs )
-    {
-        fitness = rhs.fitness;
-        penalty = rhs.penalty;
-        data_ = rhs.data_;
+        data_       = rhs.data_;
+        lowerBound_ = rhs.lowerBound_;
+        upperBound_ = rhs.upperBound_;
+        fitness     = rhs.fitness;
+        penalty     = rhs.penalty;
         return *this;
     }
 
-    constexpr inline auto & operator=( UnboundedVector< T, N, Decimal > && rhs )
+    constexpr inline auto & operator=( Vector< T, N, Decimal > && rhs )
     {
-        fitness = rhs.fitness;
-        penalty = rhs.penalty;
-        data_ = std::move( rhs.data_ );
+        data_       = std::move( rhs.data_ );
+        lowerBound_ = rhs.lowerBound_;
+        upperBound_ = rhs.upperBound_;
+        fitness     = rhs.fitness;
+        penalty     = rhs.penalty;
         return *this;
     }
 
-    constexpr friend void swap( UnboundedVector< T, N, Decimal > & first, UnboundedVector< T, N, Decimal > & second )
+    class iterator
     {
-        using std::swap;
-        swap( first.fitness, second.fitness );
-        swap( first.penalty, second.penalty );
-        swap( first.data_  , second.data_   );
-    }
+    public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Vector::value_type;
+        using difference_type   = std::ptrdiff_t;
+        using pointer           = value_type *;
+        using reference         = value_type &;
+
+        explicit constexpr iterator( Vector & vector, std::size_t const index ) : vector_{ vector }, index_{ index } {}
+        inline bool operator==( iterator const & other ) const { return index_ == other.index_ && &vector_ == &other.vector_; }
+        inline bool operator!=( iterator const & other ) const { return !( *this == other ); }
+        inline iterator & operator++() { ++index_; return *this; }
+        inline reference operator*() { return vector_[ index_ ]; }
+
+    private:
+        Vector & vector_;
+        std::size_t index_;
+    };
+
+    class const_iterator
+    {
+    public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Vector::value_type;
+        using difference_type   = std::ptrdiff_t;
+        using pointer           = value_type *;
+        using reference         = value_type &;
+
+        explicit constexpr const_iterator( Vector const & vector, std::size_t const index ) : vector_{ vector }, index_{ index } {}
+        inline bool operator==( const_iterator const & other ) const { return index_ == other.index_ && &vector_ == &other.vector_; }
+        inline bool operator!=( const_iterator const & other ) const { return !( *this == other ); }
+        inline const_iterator & operator++() { ++index_; return *this; }
+        inline value_type operator*() const { return vector_[ index_ ]; }
+
+    private:
+        Vector const & vector_;
+        std::size_t index_;
+    };
 
     constexpr auto size() const { return N; }
 
-    constexpr auto begin() const { return std::begin( data_ ); }
-    constexpr auto end  () const { return std::end  ( data_ ); }
+    constexpr auto begin() const { return const_iterator( *this, 0 ); }
+    constexpr auto end  () const { return const_iterator( *this, N ); }
 
-    constexpr auto begin() { return std::begin( data_ ); }
-    constexpr auto end  () { return std::end  ( data_ ); }
-
-    Decimal fitness{ constant::worstFitness< Decimal >() };
-    Decimal penalty{ constant::worstPenalty< Decimal >() };
+    constexpr auto begin() { return iterator( *this, 0 ); }
+    constexpr auto end  () { return iterator( *this, N ); }
 
 private:
     std::array< value_type, N > data_{};
+    value_type lowerBound_
+    {
+        std::is_floating_point_v< value_type > ?
+            -1 * std::numeric_limits< value_type >::max() :
+                 std::numeric_limits< value_type >::min()
+    };
+    value_type upperBound_{ std::numeric_limits< value_type >::max() };
+
+public:
+    Decimal fitness{ constant::worstFitness< Decimal >() };
+    Decimal penalty{ constant::worstPenalty< Decimal >() };
 };
-
-template< typename T, std::size_t N, typename Decimal = decimal_t >
-using Vector = UnboundedVector< T, N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using UnboundedIntVector = UnboundedVector< std::int32_t, N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using IntVector = UnboundedIntVector< N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using UnboundedRealVector = UnboundedVector< decimal_t, N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using RealVector = UnboundedRealVector< N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using UnboundedBitVector = UnboundedVector< bool, N, Decimal >;
-
-template< std::size_t N, typename Decimal = decimal_t >
-using BitVector = UnboundedBitVector< N, Decimal >;
 
 }
 
 template< typename T, std::size_t N >
-std::ostream & operator<<( std::ostream & stream, ecfcpp::UnboundedVector< T, N > const & vector )
+std::ostream & operator<<( std::ostream & stream, ecfcpp::Vector< T, N > const & vector )
 {
     stream << '{';
 
