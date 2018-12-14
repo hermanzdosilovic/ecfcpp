@@ -233,6 +233,65 @@ template
     return 0.5 + ( numeratorFactor * numeratorFactor - 0.5 ) / ( denominatorFactor * denominatorFactor );
 }
 
+// https://www.cs.unm.edu/~neal.holts/dga/benchmarkFunction/schafferf7.html
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
+[[ nodiscard ]] constexpr Decimal shafferf7( Point const & point ) noexcept
+{
+    assert( std::size( point ) > 1 );
+
+    Decimal result{ 0 };
+    auto const normalizer{ 1 / static_cast< Decimal >( std::size( point ) - 1 ) };
+
+    for ( std::size_t i{ 0 }; i < std::size( point ) - 1; ++i )
+    {
+        auto const si{ std::hypot( static_cast< Decimal >( point[ i ] ), static_cast< Decimal >( point[ i + 1 ] ) ) };
+        auto const factor{ normalizer * std::sqrt( si ) * ( std::sin( 50 * std::pow( si, 0.2 ) ) + 1 ) };
+        result += factor * factor;
+    }
+
+    return result;
+}
+
+// https://www.sfu.ca/~ssurjano/spheref.html
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
+[[ nodiscard ]] constexpr Decimal sphere( Point const & point ) noexcept
+{
+    Decimal result{ 0 };
+    for ( auto const & x : point )
+    {
+        auto const v{ static_cast< Decimal >( x ) };
+        result += v * v;
+    }
+    return result;
+}
+
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
+[[ nodiscard ]] constexpr Decimal offsetSphere( Point const & point ) noexcept
+{
+    Decimal result{ 0 };
+    for ( std::size_t i{ 0 }; i < std::size( point ); ++i )
+    {
+        auto const v{ static_cast< Decimal >( point[ i ] ) };
+        result += ( v - ( i + 1 ) ) * ( v - ( i + 1 ) );
+    }
+    return result;
+}
+
 }
 
 #endif // ECFCPP_FUNCTIONS_FUNCTIONS_HPP
