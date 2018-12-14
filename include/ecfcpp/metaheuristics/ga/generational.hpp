@@ -32,6 +32,7 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
 
         auto const & best{ *std::max_element( std::begin( population ), std::end( population ) ) };
 
+        //std::cout << best.fitness << '\n';
         if ( std::abs( best.fitness - desiredFitness ) < precision )
         {
             return best;

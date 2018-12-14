@@ -16,8 +16,10 @@ template< typename Function >
 class CallCounter
 {
 public:
-    constexpr CallCounter( Function  & function ) : function_{ function } {}
-    constexpr CallCounter( Function && function ) : function_{ function } {}
+    constexpr CallCounter( Function function ) : function_{ function } {}
+
+    constexpr CallCounter( CallCounter const & other ) = default;
+    constexpr CallCounter( CallCounter && other ) = default;
 
     template< typename Point >
     [[ nodiscard ]] constexpr auto operator()( Point const & p ) const noexcept
@@ -29,7 +31,7 @@ public:
     constexpr inline auto callCount() const noexcept { return callCounter_; }
 
 private:
-    Function & function_;
+    Function function_;
     mutable std::uint64_t callCounter_{};
 };
 
@@ -183,6 +185,30 @@ template
         result += v * v - 10 * std::cos( constant::tau< Decimal >() * v );
     }
     return result;
+}
+
+// http://benchmarkfcns.xyz/benchmarkfcns/rosenbrockfcn.html
+template
+<
+    typename Point,
+    typename Decimal = std::conditional_t< std::is_floating_point_v< typename Point::value_type >, typename Point::value_type, decimal_t >,
+    typename = std::enable_if_t< std::is_arithmetic_v< typename Point::value_type > >
+>
+[[ nodiscard ]] constexpr auto rosenbrock( Decimal const a = 1, Decimal const b = 100 ) noexcept
+{
+    return
+    [ a, b ]
+    ( Point const & point ) constexpr -> Decimal
+    {
+        Decimal result{ 0 };
+        for ( std::size_t i{ 0 }; i < std::size( point ) - 1; ++i )
+        {
+            auto const x{ static_cast< Decimal >( point[ i     ] ) };
+            auto const y{ static_cast< Decimal >( point[ i + 1 ] ) };
+            result += b * ( y - x * x ) * ( y - x * x ) + ( a - x ) * ( a - x );
+        }
+        return result;
+    };
 }
 
 }
