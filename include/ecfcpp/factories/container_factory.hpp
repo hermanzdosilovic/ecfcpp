@@ -23,7 +23,7 @@ void initialize( Population & population, Function && initializer )
         std::end  ( population ),
         [ & initializer ]( auto & individual )
         {
-            std::generate( std::begin( individual ), std::end( individual ), initializer );
+            std::generate( std::begin( individual.data() ), std::end( individual.data() ), initializer );
         }
     );
 }
@@ -40,7 +40,7 @@ Population< Container > create
 (
     Container const & templateContainer,
     std::size_t const size,
-    Function && initializer = [](){ return random::normal(); }
+    Function && initializer = [](){ return random::normal< typename Container::value_type >(); }
 )
 {
     Population< Container > population( size, templateContainer );
