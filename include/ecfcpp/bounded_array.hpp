@@ -109,7 +109,7 @@ public:
 
     private:
         BoundedArray & array_;
-        std::size_t index_;
+        std::size_t    index_;
     };
 
     class const_iterator
@@ -144,16 +144,16 @@ public:
 
     private:
         BoundedArray const & array_;
-        std::size_t index_;
+        std::size_t          index_;
     };
 
-    constexpr auto size() const { return N; }
+    constexpr inline auto size() const { return N; }
 
-    constexpr auto begin() const { return const_iterator( *this, 0 ); }
-    constexpr auto end  () const { return const_iterator( *this, N ); }
+    constexpr inline auto begin() const { return const_iterator( *this, 0 ); }
+    constexpr inline auto end  () const { return const_iterator( *this, N ); }
 
-    constexpr auto begin() { return iterator( *this, 0 ); }
-    constexpr auto end  () { return iterator( *this, N ); }
+    constexpr inline auto begin() { return iterator( *this, 0 ); }
+    constexpr inline auto end  () { return iterator( *this, N ); }
 
 private:
     std::array< value_type, N > data_{};
