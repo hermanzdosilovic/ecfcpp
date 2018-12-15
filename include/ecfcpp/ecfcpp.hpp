@@ -11,6 +11,7 @@
 #include "selections/selections.hpp"
 #include "utils/utils.hpp"
 
+#include "bounded_array.hpp"
 #include "constants.hpp"
 #include "types.hpp"
 

@@ -1,7 +1,6 @@
 #ifndef ECFCPP_FACTORIES_VECTOR_FACTORY_HPP
 #define ECFCPP_FACTORIES_VECTOR_FACTORY_HPP
 
-#include <ecfcpp/chromosomes/vector.hpp>
 #include <ecfcpp/types.hpp>
 #include <ecfcpp/utils/random.hpp>
 
@@ -33,36 +32,36 @@ void initialize( Population & population, Function && initializer )
 
 template
 <
-    typename Vector,
+    typename Container,
     typename Function,
-    typename std::enable_if_t< !std::is_same< bool, typename Vector::value_type >::value > * = nullptr
+    typename std::enable_if_t< !std::is_same< bool, typename Container::value_type >::value > * = nullptr
 >
-Population< Vector > create
+Population< Container > create
 (
-    Vector const & templateVector,
+    Container const & templateContainer,
     std::size_t const size,
     Function && initializer = [](){ return random::normal(); }
 )
 {
-    Population< Vector > population( size, templateVector );
+    Population< Container > population( size, templateContainer );
     detail::initialize( population, initializer );
     return population;
 }
 
 template
 <
-    typename Vector,
+    typename Container,
     typename Function,
-    typename std::enable_if_t< std::is_same< bool, typename Vector::value_type >::value > * = nullptr
+    typename std::enable_if_t< std::is_same< bool, typename Container::value_type >::value > * = nullptr
 >
-Population< Vector > create
+Population< Container > create
 (
-    Vector const & templateVector,
+    Container const & templateContainer,
     std::size_t const size,
     Function && initializer = [](){ return random::boolean(); }
 )
 {
-    Population< Vector > population( size, templateVector );
+    Population< Container > population( size, templateContainer );
     detail::initialize( population, initializer );
     return population;
 }

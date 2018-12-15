@@ -20,10 +20,10 @@ public:
         T firstChild { mom };
         T secondChild{ dad };
 
-        for ( std::size_t i{ 0 }; i < std::size( mom ); ++i )
+        for ( std::size_t i{ 0 }; i < std::size( mom.data() ); ++i )
         {
-            firstChild [ i ] = lambda_ * mom[ i ] + ( 1 - lambda_ ) * dad[ i ];
-            secondChild[ i ] = lambda_ * dad[ i ] + ( 1 - lambda_ ) * mom[ i ];
+            firstChild .data()[ i ] = lambda_ * mom.data()[ i ] + ( 1 - lambda_ ) * dad.data()[ i ];
+            secondChild.data()[ i ] = lambda_ * dad.data()[ i ] + ( 1 - lambda_ ) * mom.data()[ i ];
         }
 
         return { firstChild, secondChild };

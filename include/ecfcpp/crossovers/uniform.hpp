@@ -21,12 +21,12 @@ public:
         T firstChild { mom };
         T secondChild{ dad };
 
-        for ( std::size_t i{ 0 }; i < std::size( mom ); ++i )
+        for ( std::size_t i{ 0 }; i < std::size( mom.data() ); ++i )
         {
             if ( random::boolean() )
             {
-                firstChild [ i ] = dad[ i ];
-                secondChild[ i ] = mom[ i ];
+                firstChild .data()[ i ] = dad.data()[ i ];
+                secondChild.data()[ i ] = mom.data()[ i ];
             }
         }
 

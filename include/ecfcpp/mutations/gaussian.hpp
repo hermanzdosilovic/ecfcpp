@@ -26,7 +26,7 @@ public:
         T mutant{ individual };
         bool mutationHappened{ false };
 
-        for ( auto & value : mutant )
+        for ( auto & value : mutant.data() )
         {
             if ( random::uniform() < mutationProbability_ )
             {
@@ -37,7 +37,7 @@ public:
 
         if ( !mutationHappened && forceMutation_ )
         {
-            mutant[ random::uniform( 0UL, std::size( mutant ) ) ] += random::normal( 0, sigma_ );
+            mutant.data()[ random::uniform( 0UL, std::size( mutant ) ) ] += random::normal( 0, sigma_ );
         }
 
         return mutant;

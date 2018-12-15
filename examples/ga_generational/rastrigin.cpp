@@ -21,7 +21,7 @@ int main()
     constexpr bool   forceMutation{ true };
     constexpr double sigma{ 0.3 };
 
-    using Chromosome = ecfcpp::Vector< float, numberOfComponents >;
+    using Chromosome = ecfcpp::Array< double, numberOfComponents >;
 
     constexpr auto function{ ecfcpp::function::CallCounter{ ecfcpp::function::rastrigin< Chromosome > } };
 

@@ -22,12 +22,12 @@ public:
         T firstChild { mom };
         T secondChild{ dad };
 
-        auto const breakPoint{ random::uniform( 0UL, std::size( mom ) ) };
+        auto const breakPoint{ random::uniform( 0UL, std::size( mom.data() ) ) };
 
         for ( std::size_t i{ 0 }; i < breakPoint; ++i )
         {
-            firstChild [ i ] = dad[ i ];
-            secondChild[ i ] = mom[ i ];
+            firstChild .data()[ i ] = dad.data()[ i ];
+            secondChild.data()[ i ] = mom.data()[ i ];
         }
 
         return { firstChild, secondChild };

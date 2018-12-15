@@ -20,11 +20,11 @@ public:
     constexpr Container< T > operator()( T const & mom, T const & dad ) const
     {
         T child{ mom };
-        for ( std::size_t i{ 0 }; i < std::size( child ); ++i )
+        for ( std::size_t i{ 0 }; i < std::size( child.data() ); ++i )
         {
-            auto const [ cmin, cmax ] = std::minmax( mom[ i ], dad[ i ] );
+            auto const [ cmin, cmax ] = std::minmax( mom.data()[ i ], dad.data()[ i ] );
             auto const interval{ ( cmax - cmin ) * ( 1 - 2 * alpha_ ) };
-            child[ i ] = cmin - ( cmax - cmin ) * alpha_ + interval * random::uniform();
+            child.data()[ i ] = cmin - ( cmax - cmin ) * alpha_ + interval * random::uniform();
         }
         return { child };
     }
