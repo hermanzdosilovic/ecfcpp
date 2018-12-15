@@ -81,6 +81,22 @@ public:
         return *this;
     }
 
+    friend std::ostream & operator<<( std::ostream & stream, Array const & array )
+    {
+        stream << '{';
+
+        char separator[]{ '\0', ' ', '\0' };
+        for ( auto const value : array )
+        {
+            stream << separator << value;
+            separator[ 0 ] = ',';
+        }
+
+        stream << '}';
+
+        return stream;
+    }
+
     constexpr auto       & data()       { return data_; }
     constexpr auto const & data() const { return data_; }
 
@@ -100,23 +116,6 @@ public:
     Decimal penalty{ constant::worstPenalty< Decimal >() };
 };
 
-}
-
-template< typename T, std::size_t N >
-std::ostream & operator<<( std::ostream & stream, ecfcpp::Array< T, N > const & vector )
-{
-    stream << '{';
-
-    char separator[]{ '\0', ' ', '\0' };
-    for ( auto const value : vector )
-    {
-        stream << separator << value;
-        separator[ 0 ] = ',';
-    }
-
-    stream << '}';
-
-    return stream;
 }
 
 #endif // ECFCPP_CHROMOSOMES_ARRAY_HPP
