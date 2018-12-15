@@ -27,7 +27,7 @@ public:
 
         for ( auto & value : mutant.data() )
         {
-            if ( random::uniform< float >() < mutationProbability_ )
+            if ( random::uniform< decltype( mutationProbability_ ) >() < mutationProbability_ )
             {
                 mutationHappened = true;
                 value = !value;
