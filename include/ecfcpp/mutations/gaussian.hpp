@@ -11,9 +11,9 @@ class Gaussian
 public:
     constexpr Gaussian
     (
-        double const mutationProbability,
-        bool   const forceMutation,
-        double const sigma
+        float const mutationProbability,
+        bool  const forceMutation,
+        float const sigma
     ) :
         mutationProbability_{ mutationProbability },
         forceMutation_{ forceMutation },
@@ -28,16 +28,17 @@ public:
 
         for ( auto & value : mutant.data() )
         {
-            if ( random::uniform() < mutationProbability_ )
+            if ( random::uniform< decltype( mutationProbability_ ) >() < mutationProbability_ )
             {
                 mutationHappened = true;
-                value += random::normal( 0, sigma_ );
+                value += random::normal< typename T::value_type >( 0.0f, sigma_ );
             }
         }
 
         if ( !mutationHappened && forceMutation_ )
         {
-            mutant.data()[ random::uniform( 0UL, std::size( mutant ) ) ] += random::normal( 0, sigma_ );
+            mutant.data()[ random::uniform( 0UL, std::size( mutant.data() ) ) ] +=
+                random::normal< typename T::value_type >( 0.0f, sigma_ );
         }
 
         return mutant;
@@ -58,9 +59,9 @@ public:
     }
 
 private:
-    double mutationProbability_;
-    bool   forceMutation_;
-    double sigma_;
+    float mutationProbability_;
+    bool  forceMutation_;
+    float sigma_;
 };
 
 }

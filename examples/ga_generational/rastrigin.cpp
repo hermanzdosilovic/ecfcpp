@@ -17,9 +17,9 @@ int main()
 
     constexpr float alpha{ 0.2 };
 
-    constexpr double mutationProbability{ 0.01 };
-    constexpr bool   forceMutation{ true };
-    constexpr double sigma{ 0.3 };
+    constexpr float mutationProbability{ 0.01 };
+    constexpr bool  forceMutation{ true };
+    constexpr float sigma{ 0.3 };
 
     using Chromosome = ecfcpp::Array< double, numberOfComponents >;
 
