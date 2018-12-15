@@ -65,7 +65,7 @@ public:
     constexpr inline bool operator==( Array const & rhs ) const { return data_ == rhs.data_; }
     constexpr inline bool operator!=( Array const & rhs ) const { return !( *this == rhs );  }
 
-    constexpr inline auto & operator=( Array const & rhs )
+    constexpr auto & operator=( Array const & rhs )
     {
         data_       = rhs.data_;
         fitness     = rhs.fitness;
@@ -73,7 +73,7 @@ public:
         return *this;
     }
 
-    constexpr inline auto & operator=( Array< T, N, Decimal > && rhs )
+    constexpr auto & operator=( Array && rhs )
     {
         data_       = std::move( rhs.data_ );
         fitness     = rhs.fitness;
