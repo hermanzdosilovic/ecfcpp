@@ -103,6 +103,31 @@ public:
         return *this;
     }
 
+    friend std::ostream & operator<<( std::ostream & stream, BinaryArray const & array )
+    {
+        stream << '{';
+
+        char separator[]{ '\0', ' ', '\0' };
+        for ( auto const value : array.data() )
+        {
+            stream << separator << static_cast< std::uint16_t >( value );
+            separator[ 0 ] = ',';
+        }
+
+        stream << "} {";
+
+        separator[ 0 ] = '\0';
+        for ( auto const value : array )
+        {
+            stream << separator << value;
+            separator[ 0 ] = ',';
+        }
+
+        stream << '}';
+
+        return stream;
+    }
+
     class iterator
     {
     public:
@@ -196,23 +221,6 @@ public:
     value_type fitness{ constant::worstFitness< value_type >() };
     value_type penalty{ constant::worstPenalty< value_type >() };
 };
-
-template< typename T, std::size_t N >
-std::ostream & operator<<( std::ostream & stream, ecfcpp::BinaryArray< T, N > const & vector )
-{
-    stream << '{';
-
-    char separator[]{ '\0', ' ', '\0' };
-    for ( auto const value : vector.data() )
-    {
-        stream << separator << static_cast< std::uint16_t >( value );
-        separator[ 0 ] = ',';
-    }
-
-    stream << '}';
-
-    return stream;
-}
 
 }
 
