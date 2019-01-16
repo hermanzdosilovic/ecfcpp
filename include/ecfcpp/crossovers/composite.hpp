@@ -4,12 +4,11 @@
 #include <ecfcpp/types.hpp>
 #include <ecfcpp/utils/random.hpp>
 
-#include <any>
 #include <cstddef>
 #include <functional>
+#include <initializer_list>
 #include <iterator>
 #include <vector>
-#include <initializer_list>
 
 namespace ecfcpp::crossover
 {
