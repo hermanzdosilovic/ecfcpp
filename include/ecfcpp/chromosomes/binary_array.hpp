@@ -23,6 +23,7 @@ class BinaryArray
 {
 public:
     using value_type = T;
+    using decimal_t  = value_type;
 
     constexpr BinaryArray
     (
@@ -218,8 +219,8 @@ private:
     std::vector< std::uint8_t > data_;
 
 public:
-    value_type fitness{ constant::worstFitness< value_type >() };
-    value_type penalty{ constant::worstPenalty< value_type >() };
+    decimal_t fitness{ constant::worstFitness< decimal_t >() };
+    decimal_t penalty{ constant::worstPenalty< decimal_t >() };
 };
 
 }

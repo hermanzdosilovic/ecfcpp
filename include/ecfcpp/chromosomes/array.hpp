@@ -28,6 +28,7 @@ class Array
 {
 public:
     using value_type = T;
+    using decimal_t  = Decimal;
 
     constexpr Array() = default;
 
@@ -112,8 +113,8 @@ private:
     BoundedArray< value_type, N > data_{};
 
 public:
-    Decimal fitness{ constant::worstFitness< Decimal >() };
-    Decimal penalty{ constant::worstPenalty< Decimal >() };
+    decimal_t fitness{ constant::worstFitness< decimal_t >() };
+    decimal_t penalty{ constant::worstPenalty< decimal_t >() };
 };
 
 }
