@@ -5,9 +5,12 @@
 #include <ecfcpp/utils/random.hpp>
 
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <initializer_list>
 #include <iterator>
+#include <numeric>
+#include <utility>
 #include <vector>
 
 namespace ecfcpp::mutation
@@ -18,26 +21,51 @@ class Composite
 {
 public:
     using Mutation = std::function< T( T const & ) >;
+    using MutationDesirability = std::pair< Mutation, std::uint8_t >;
 
     Composite
     ( 
-        std::initializer_list< Mutation > const & mutations
+        std::initializer_list< MutationDesirability > const & mutations
     ) : 
-        chooseProbability_{ 1 / static_cast< decltype( chooseProbability_ ) >( std::size( mutations ) ) },
         mutations_{ mutations }
-    {}
+    {
+        auto const desirabilitySum
+        {
+            std::accumulate
+            (
+                std::begin( mutations_ ),
+                std::end  ( mutations_ ),
+                static_cast< decimal_t >( 0 ),
+                []( auto const & current, auto const & mutation )
+                {
+                    return current + mutation.second;
+                }
+            )
+        };
+
+        chooseProbability_.reserve( std::size( mutations_ ) );
+
+        for ( auto const & mutation : mutations_ )
+        {
+            chooseProbability_.emplace_back( mutation.second / desirabilitySum );
+        }
+    }
 
     T operator()( T const & individual ) const
     {
+        auto const randomValue{ random::uniform< decimal_t >() };
+        decimal_t probabilitySum{ 0 };
+
         for ( auto const & mutation : mutations_ )
         {
-            if ( chooseProbability_ < random::uniform< decltype( chooseProbability_ ) >() )
+            probabilitySum += mutation.second;
+            if ( randomValue < probabilitySum )
             {
-                return mutation( individual );
+                return mutation.first( individual );
             }
         }
 
-        return mutations_.back()( individual );
+        return mutations_.back().first( individual );
     }
 
     Container< T > operator()( Container< T > const & individuals ) const
@@ -54,8 +82,8 @@ public:
     }
 
 private:
-    decimal_t chooseProbability_;
-    std::vector< Mutation > mutations_;
+    std::vector< decimal_t > chooseProbability_;
+    std::vector< MutationDesirability > mutations_;
 };
 
 }

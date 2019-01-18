@@ -23,7 +23,7 @@ public:
     ( 
         std::initializer_list< Crossover > const & crossovers
     ) : 
-        chooseProbability_{ 1 / static_cast< decltype( chooseProbability_ ) >( std::size( crossovers ) ) },
+        chooseProbability_{ 1.0f / std::size( crossovers ) },
         crossovers_{ crossovers }
     {}
 
@@ -31,7 +31,7 @@ public:
     {
         for ( auto const & crossover : crossovers_ )
         {
-            if ( chooseProbability_ < random::uniform< decltype( chooseProbability_ ) >() )
+            if ( chooseProbability_ < random::uniform< decimal_t >() )
             {
                 return crossover( mom, dad );
             }
