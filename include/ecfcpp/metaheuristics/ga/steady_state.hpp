@@ -1,5 +1,5 @@
-#ifndef ECFCPP_METAHEURISTICS_GA_GENERATIONAL_HPP
-#define ECFCPP_METAHEURISTICS_GA_GENERATIONAL_HPP
+#ifndef ECFCPP_METAHEURISTICS_GA_STEADY_STATE_HPP
+#define ECFCPP_METAHEURISTICS_GA_STEADY_STATE_HPP
 
 #include <algorithm>
 #include <cstddef>
@@ -10,9 +10,9 @@ namespace ecfcpp::ga
 {
 
 template< typename Problem, typename Selection, typename Crossover, typename Mutation, typename Population >
-[[ nodiscard ]] constexpr auto generational
+[[ nodiscard ]] constexpr auto steady_state
 (
-    bool          const   useElitism,
+    float         const   mortalityRate,
     std::size_t   const   maxGenerations,
     double        const   desiredFitness,
     double        const   precision,
@@ -25,7 +25,6 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
 )
 {
     auto population{ initialPopulation };
-    auto nextPopulation{ initialPopulation };
 
     for ( std::size_t i{ 0 }; i < maxGenerations; ++i )
     {
@@ -49,25 +48,19 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
             return best;
         }
 
-        if ( useElitism )
+        for ( std::size_t j{ 0 }; j < mortalityRate * std::size( population ); ++j )
         {
-            nextPopulation[ 0 ] = best;
-        }
-
-        for ( std::size_t j{ useElitism ? 1UL : 0UL }; j < std::size( population ); ++j )
-        {
-            nextPopulation[ j ] =
-                mutation
+            auto x{ selection( population ) };
+            auto y{ selection( population ) };
+            population[ random::uniform< std::size_t >( j, std::size( population ) ) ] = mutation
+            ( 
+                crossover
                 (
-                    crossover
-                    (
-                        selection( population ),
-                        selection( population )
-                    )[ 0 ]
-                );
+                    selection( population ),
+                    selection( population )
+                )[ 0 ]
+            );
         }
-
-        std::swap( population, nextPopulation );
     }
 
     if ( logFrequency > 0 )
@@ -80,4 +73,4 @@ template< typename Problem, typename Selection, typename Crossover, typename Mut
 
 }
 
-#endif // ECFCPP_METAHEURISTICS_GA_GENERATIONAL_HPP
+#endif // ECFCPP_METAHEURISTICS_GA_STEADY_STATE_HPP
